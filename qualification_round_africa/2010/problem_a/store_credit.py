@@ -1,22 +1,24 @@
 #!/usr/bin/env python3.4
 import sys
-from itertools import combinations, count
 
-cases = []
-credits = []
-items = []
 
-with open(sys.argv[1]) as file_:
-    next(file_)
-    cases = (list(zip(*[file_]*3)))
+def find_two_items_with_sum(list_, sum_):
+    hash_ = {}
+    for i, element in enumerate(list_, 1):
+        if sum_ - element in hash_.keys():
+            for t in hash_[sum_ - element]:
+                return t, i
 
-for case in cases:
-    credits.append(int(case[0]))
-    items.append([int(e) for e in case[2].split()])
+        if element in hash_.keys():
+            hash_[element].append(i)
+        else:
+            hash_[element] = [i]
 
-for credit, prices, i in zip(credits, items, count()):
-    for tow_items in combinations(prices, 2):
-        if sum(tow_items) == credit:
-            print("Case #{}:".format(i+1), end=' ')
-            print(' '.join([str(i+1) for i, price in enumerate(prices)
-                            if price in tow_items]))
+if __name__ == '__main__':
+    with open(sys.argv[1]) as file_:
+        next(file_)
+        for i, case in enumerate(zip(*[file_]*3), 1):
+            credit = int(case[0])
+            prices = [int(item) for item in case[2].split()]
+            tow_items = find_two_items_with_sum(prices, credit)
+            print("Case #{}: {} {}".format(i, *tow_items))
